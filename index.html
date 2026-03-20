@@ -859,7 +859,7 @@ contactForm?.addEventListener("submit", async (e) => {
   submitBtn.disabled = true;
 
   try {
-    const res = await fetch("https://portfolio-backend-production-9f17.up.railway.app", {
+    const res = await fetch("https://portfolio-backend-production-9f17.up.railway.app/api/contact", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
