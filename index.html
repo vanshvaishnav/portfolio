@@ -858,40 +858,44 @@ contactForm?.addEventListener("submit", async (e) => {
   submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
   submitBtn.disabled = true;
 
-  try {
-    const res = await fetch("http://localhost:8082/api/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name, email, subject, message })
-    });
+// Detect if we are on localhost or production
+const BASE_URL = window.location.hostname === "localhost"
+  ? "http://localhost:8082"
+  : "https://portfolio-backend-production-9f17.up.railway.app";
 
-    if (!res.ok) {
-      throw new Error("Failed to send message");
-    }
+try {
+  const res = await fetch(`${BASE_URL}/api/contact`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, email, subject, message })
+  });
 
-    // ✅ Success UI
-    contactForm.reset();
-    successMsg.classList.remove("hidden");
-
-    submitBtn.innerHTML = '<i class="fas fa-check"></i> Sent';
-    submitBtn.classList.remove("bg-primary");
-    submitBtn.classList.add("bg-green-600");
-
-  } catch (err) {
-    console.error(err);
-    alert("❌ Error sending message. Check backend!");
-  } finally {
-    setTimeout(() => {
-      submitBtn.innerHTML = originalText;
-      submitBtn.disabled = false;
-      submitBtn.classList.add("bg-primary");
-      submitBtn.classList.remove("bg-green-600");
-      successMsg.classList.add("hidden");
-    }, 3000);
+  if (!res.ok) {
+    throw new Error("Failed to send message");
   }
-});
+
+  // ✅ Success UI
+  contactForm.reset();
+  successMsg.classList.remove("hidden");
+
+  submitBtn.innerHTML = '<i class="fas fa-check"></i> Sent';
+  submitBtn.classList.remove("bg-primary");
+  submitBtn.classList.add("bg-green-600");
+
+} catch (err) {
+  console.error(err);
+  alert("❌ Error sending message. Check backend!");
+} finally {
+  setTimeout(() => {
+    submitBtn.innerHTML = originalText;
+    submitBtn.disabled = false;
+    submitBtn.classList.add("bg-primary");
+    submitBtn.classList.remove("bg-green-600");
+    successMsg.classList.add("hidden");
+  }, 3000);
+}
       // ✅ Resume Dropdown
       const resumeBtn = document.getElementById('resume-btn');
       const resumeDropdown = document.getElementById('resumeDropdown');
