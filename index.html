@@ -723,7 +723,7 @@
                 <a href="https://www.linkedin.com/in/vansh-vaishnav-866b16311" target="_blank" class="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm">
                     <i class="fab fa-linkedin-in"></i>
                 </a>
-                <a href="https://instagram.com/vansh777___" target="_blank" class="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm">
+                <a href="https://instagram.com/vanshvaishnav" target="_blank" class="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm">
                     <i class="fab fa-instagram"></i>
                 </a>
                 <a href="mailto:vanshvaishnav948@gmail.com" class="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm">
@@ -858,44 +858,40 @@ contactForm?.addEventListener("submit", async (e) => {
   submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
   submitBtn.disabled = true;
 
-// Detect if we are on localhost or production
-const BASE_URL = window.location.hostname === "localhost"
-  ? "http://localhost:8082"
-  : "https://portfolio-backend-production-9f17.up.railway.app";
+  try {
+    const res = await fetch("https://portfolio-backend-production-9f17.up.railway.app", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name, email, subject, message })
+    });
 
-try {
-  const res = await fetch(`${BASE_URL}/api/contact`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name, email, subject, message })
-  });
+    if (!res.ok) {
+      throw new Error("Failed to send message");
+    }
 
-  if (!res.ok) {
-    throw new Error("Failed to send message");
+    // ✅ Success UI
+    contactForm.reset();
+    successMsg.classList.remove("hidden");
+
+    submitBtn.innerHTML = '<i class="fas fa-check"></i> Sent';
+    submitBtn.classList.remove("bg-primary");
+    submitBtn.classList.add("bg-green-600");
+
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error sending message. Check backend!");
+  } finally {
+    setTimeout(() => {
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+      submitBtn.classList.add("bg-primary");
+      submitBtn.classList.remove("bg-green-600");
+      successMsg.classList.add("hidden");
+    }, 3000);
   }
-
-  // ✅ Success UI
-  contactForm.reset();
-  successMsg.classList.remove("hidden");
-
-  submitBtn.innerHTML = '<i class="fas fa-check"></i> Sent';
-  submitBtn.classList.remove("bg-primary");
-  submitBtn.classList.add("bg-green-600");
-
-} catch (err) {
-  console.error(err);
-  alert("❌ Error sending message. Check backend!");
-} finally {
-  setTimeout(() => {
-    submitBtn.innerHTML = originalText;
-    submitBtn.disabled = false;
-    submitBtn.classList.add("bg-primary");
-    submitBtn.classList.remove("bg-green-600");
-    successMsg.classList.add("hidden");
-  }, 3000);
-}
+});
       // ✅ Resume Dropdown
       const resumeBtn = document.getElementById('resume-btn');
       const resumeDropdown = document.getElementById('resumeDropdown');
